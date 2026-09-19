@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: prisma
+      POSTGRES_PASSWORD: prisma
+      POSTGRES_DB: corporate_invite
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+
+  backend:
+    build:
+      context: ./backend
+    environment:
+      DATABASE_URL: postgres://prisma:prisma@postgres:5432/corporate_invite
+      JWT_SECRET: supersecretchangeme
+    depends_on:
+      - postgres
+    ports:
+      - '4000:4000'
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - '5173:5173'
+    depends_on:
+      - backend
+
+volumes:
+  db-data:

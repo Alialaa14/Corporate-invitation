@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+}
+
+enum EventStatus {
+  DRAFT
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum InvitationStatus {
+  PENDING
+  ACTIVE
+  CANCELLED
+}
+
+enum AttendanceStatus {
+  NOT_ATTENDED
+  ATTENDED
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(ADMIN)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Event {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  venue       String?
+  startDate   DateTime
+  endDate     DateTime
+  status      EventStatus @default(DRAFT)
+  invitations Invitation[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Invitation {
+  id              String          @id @default(uuid())
+  eventId         String
+  event           Event           @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  invitationCode  String          @unique
+  tokenHash       String          @unique
+  fullName        String
+  email           String?
+  phone           String?
+  company         String?
+  jobTitle        String?
+  numberOfGuests  Int?             
+  status          InvitationStatus @default(ACTIVE)
+  attendanceStatus AttendanceStatus @default(NOT_ATTENDED)
+  attendedAt      DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model ImportJob {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  status    String
+  summary   Json?
+}

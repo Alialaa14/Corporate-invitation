@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Small helper utilities */
+.container { @apply max-w-6xl mx-auto; }
+.card { @apply bg-white p-4 rounded-lg shadow-sm; }
+.notice { @apply bg-slate-50 text-slate-800 p-3 rounded-md; }
+.video-preview { @apply w-full max-w-md rounded-md bg-black; }
